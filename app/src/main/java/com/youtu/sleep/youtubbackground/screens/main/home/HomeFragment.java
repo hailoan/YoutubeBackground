@@ -31,15 +31,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends BaseFragment implements PopularVideosContract.View,
-        VideoAdapter.OnClickItemVideoListener {
+public class HomeFragment extends BaseFragment implements PopularVideosContract.View, VideoAdapter.OnItemClickListener {
 
     private VideoAdapter mAdapter;
+    private PopularVideosPresenter mPresenter;
 
-    public VideoAdapter getmAdapter() {
+    public VideoAdapter getAdapter() {
         return mAdapter;
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -67,7 +66,7 @@ public class HomeFragment extends BaseFragment implements PopularVideosContract.
         }
         if (networkInfo != null && networkInfo.isConnected()) {
             YoutubeVideoRepository repository = YoutubeVideoRepository.getInstance(getContext());
-            PopularVideosPresenter mPresenter = new PopularVideosPresenter(this, repository);
+            mPresenter = new PopularVideosPresenter(this, repository);
             mPresenter.getPopularVideos();
         } else {
             Toast.makeText(getContext(), R.string.connect_network_fail_message, Toast.LENGTH_SHORT).show();
@@ -82,8 +81,7 @@ public class HomeFragment extends BaseFragment implements PopularVideosContract.
         RecyclerView mRecyclerVideos = view.findViewById(R.id.recycler_most_popular_videos);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         mRecyclerVideos.setLayoutManager(llm);
-        mAdapter = new VideoAdapter();
-        mAdapter.setOnClickVideoListener(this);
+        mAdapter = new VideoAdapter(this);
         mRecyclerVideos.setAdapter(mAdapter);
     }
 
@@ -102,30 +100,46 @@ public class HomeFragment extends BaseFragment implements PopularVideosContract.
 
     @Override
     public void showGetPopularVideosErrorMessage(String message) {
-        Toast.makeText(getContext(), R.string.load_video_data_fail_message + message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.fail_message + message, Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * show notification if adding to favourite video list successfully
+     */
 
     @Override
     public void insertVideoListSuccessfully() {
-
+        Toast.makeText(getContext(), R.string.add_favourite_video_success_message, Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * show error message if adding to favourite video list unsuccessfully
+     */
 
     @Override
     public void insertVideoListUnsuccessfully() {
+        Toast.makeText(getContext(), R.string.fail_message, Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void onFavouriteVideoClick(Video video) {
+        mPresenter.insertVideo(video);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRemoveFavouriteVideoClick(Video video) {
+        mPresenter.removeVideo(video);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void removeVideoFromFavouriteListSuccessfully() {
-
+        Toast.makeText(getContext(), R.string.remove_favourite_video_success_message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onClickItemVideo(int position) {
-        Intent intent = new Intent(getActivity(), VideoActivity.class);
-        intent.putParcelableArrayListExtra(Contants.EXTRA_LIST_VIDEO
-                , (ArrayList<? extends Parcelable>) mAdapter.getVideos());
-        intent.putExtra(Contants.EXTRA_POS_VIDEO, position);
-        new Navigator(getActivity()).startActivity(intent);
+    public void removeVideoFromFavouriteListUnsuccessfully() {
+        Toast.makeText(getContext(), R.string.fail_message, Toast.LENGTH_SHORT).show();
     }
 }

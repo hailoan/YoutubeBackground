@@ -22,57 +22,54 @@ import static com.youtu.sleep.youtubbackground.utils.Contants.TRUE;
 /**
  * Created by thuy on 01/08/2018.
  */
-public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder> {
-    private static VideoAdapter.OnClickItemVideoListener sOnClickVideo;
-    private static List<Video> sVideos;
-    private OnItemClick mListener;
+public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
-    public VideoAdapter(OnItemClick listener) {
+    private static List<Video> mVideos;
+    private static OnItemClickListener mListener;
+
+    public VideoAdapter(OnItemClickListener listener) {
         this.mListener = listener;
-        this.sVideos = new ArrayList<>();
+        this.mVideos = new ArrayList<>();
     }
 
     public VideoAdapter() {
-        this.sVideos = new ArrayList<>();
-    }
-
-    public void setOnClickVideoListener(OnClickItemVideoListener onClickVideo) {
-        this.sOnClickVideo = onClickVideo;
+        this.mVideos = new ArrayList<>();
     }
 
     public void setData(List<Video> videos) {
-        this.sVideos.clear();
-        this.sVideos.addAll(videos);
+        this.mVideos.clear();
+        this.mVideos.addAll(videos);
         notifyDataSetChanged();
     }
-    public List<Video> getVideos() {
-        return sVideos;
-    }
+
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false));
+    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new VideoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.bindData(position);
+    public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
+        holder.bindData(mVideos.get(position));
+    }
+
+    public void notifyDataChanged() {
+        this.notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return sVideos == null ? 0 : sVideos.size();
+        return mVideos == null ? 0 : mVideos.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         private boolean isFavourite = false;
 
         private ImageView mImageVideo, mImageFavourite;
         private TextView mTextDuration, mTextVideoName, mTextChannel, mTextDescription;
-        private RelativeLayout mRelativeVideo;
 
-        public MyViewHolder(final View itemView) {
+        public VideoViewHolder(final View itemView) {
             super(itemView);
 
             mImageVideo = itemView.findViewById(R.id.image_video);
@@ -81,67 +78,40 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             mTextVideoName = itemView.findViewById(R.id.text_name);
             mTextChannel = itemView.findViewById(R.id.text_channel);
             mTextDescription = itemView.findViewById(R.id.text_description);
-            mRelativeVideo = itemView.findViewById(R.id.relative_video);
-
-            mImageFavourite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!isFavourite) {
-                        checkFavouriteVideo();
-                    } else {
-                        unCheckFavouriteVideo();
-                    }
-                    notifyDataSetChanged();
-                }
-            });
         }
 
-        void checkFavouriteVideo() {
-            Video v = sVideos.get(getAdapterPosition());
-            v.setIsFavourite(TRUE);
-            mListener.onFavouriteVideoClick(v);
-            isFavourite = true;
-        }
-
-        void unCheckFavouriteVideo() {
-            Video v = sVideos.get(getAdapterPosition());
-            v.setIsFavourite(FALSE);
-            mListener.onRemoveFavouriteVideoClick(v);
-            isFavourite = false;
-        }
-
-        void bindData(int position) {
-            Video video = sVideos.get(position);
+        void bindData(final Video video) {
             Glide.with(itemView.getContext()).load(video.getUrlThumbnail()).into(mImageVideo);
             mTextVideoName.setText(video.getTitle());
             mTextChannel.setText(video.getChannelTitle());
             mTextDescription.setText(video.getDescription());
+
             if (video.getIsFavourite() == TRUE) {
                 mImageFavourite.setBackgroundResource(R.drawable.ic_favourite_default);
             } else if (video.getIsFavourite() == FALSE) {
                 mImageFavourite.setBackgroundResource(R.drawable.ic_favourite_unable);
             }
-            mRelativeVideo.setTag(position);
-            mRelativeVideo.setOnClickListener(on_click);
-        }
 
-        private View.OnClickListener on_click = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = (int) view.getTag();
-                sOnClickVideo.onClickItemVideo(position);
-            }
-        };
+            mImageFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (video.getIsFavourite() == FALSE) {
+                        video.setIsFavourite(TRUE);
+                        mListener.onFavouriteVideoClick(video);
+
+                    } else {
+                        video.setIsFavourite(FALSE);
+                        mListener.onRemoveFavouriteVideoClick(video);
+                    }
+                }
+            });
+        }
     }
 
-    public interface OnItemClick {
+    public interface OnItemClickListener {
         void onFavouriteVideoClick(Video video);
 
         void onRemoveFavouriteVideoClick(Video video);
 
-    }
-
-    public interface OnClickItemVideoListener {
-        void onClickItemVideo(int position);
     }
 }

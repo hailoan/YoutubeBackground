@@ -9,24 +9,23 @@ import java.util.List;
  */
 public interface YoutubeVideoDataSource {
 
+    interface CallBack<T>{
+        void onGetDataSuccess(T data);
+        void onAddOrRemoveSuccess();
+        void onFail(String message);
+    }
+
     /**
      * Local data for videos
      */
 
     interface LocalDataSource extends YoutubeVideoDataSource {
-        interface OnActionLocalListener {
-            void onSuccess();
 
-            void onSuccess(List<Video> list);
+        void addToFavouriteVideoList(Video video, CallBack callBack);
 
-            void onFail();
-        }
+        void getFavouriteVideos(CallBack<List<Video>> callBack);
 
-        void addToFavouriteVideoList(Video video, OnActionLocalListener listener);
-
-        void getFavouriteVideos(OnActionLocalListener listener);
-
-        void removeFromFavouriteVideoList(Video video, OnActionLocalListener listener);
+        void removeFromFavouriteVideoList(Video video, CallBack callBack);
     }
 
     /**
@@ -34,14 +33,9 @@ public interface YoutubeVideoDataSource {
      */
 
     interface RemoteDataSource extends YoutubeVideoDataSource {
-        interface OnActionRemoteListener {
-            void onSuccess(List<Video> videos);
 
-            void onFail(String message);
-        }
+        void getPopularVideos(CallBack<List<Video>> callBack);
 
-        void getPopularVideos(OnActionRemoteListener listener);
-
-        void searchVideos(String query, OnActionRemoteListener listener);
+        void searchVideos(String query, CallBack<List<Video>> callBack);
     }
 }

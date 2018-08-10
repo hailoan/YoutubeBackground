@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void showResultSearch(List<Video> videos) {
-        mHomeFragment.getmAdapter().setData(videos);
+        mHomeFragment.getAdapter().setData(videos);
     }
 
     @Override

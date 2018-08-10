@@ -55,21 +55,19 @@ public class VideoPresenter implements VideoContract.Presenter {
 
     @Override
     public void updateVideoFavourite(Video video) {
-        mVideoRepository.addToFavouriteVideoList(video, new YoutubeVideoDataSource
-                .LocalDataSource
-                .OnActionLocalListener() {
+        mVideoRepository.addToFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack() {
             @Override
-            public void onSuccess() {
-                mView.updateStatusFavouriteVideo(1);
-            }
-
-            @Override
-            public void onSuccess(List<Video> list) {
+            public void onGetDataSuccess(Object data) {
 
             }
 
             @Override
-            public void onFail() {
+            public void onAddOrRemoveSuccess() {
+
+            }
+
+            @Override
+            public void onFail(String message) {
 
             }
         });

@@ -21,10 +21,15 @@ public class PopularVideosPresenter implements PopularVideosContract.Presenter {
 
     @Override
     public void getPopularVideos() {
-        mModel.getPopularVideos(new YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener() {
+        mModel.getPopularVideos(new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
-            public void onSuccess(List<Video> videos) {
+            public void onGetDataSuccess(List<Video> videos) {
                 mView.showPopularVideos(videos);
+            }
+
+            @Override
+            public void onAddOrRemoveSuccess() {
+                //nothing todo
             }
 
             @Override
@@ -35,39 +40,41 @@ public class PopularVideosPresenter implements PopularVideosContract.Presenter {
     }
 
     @Override
-    public void insertVideoList(Video video) {
-        mModel.addToFavouriteVideoList(video, new YoutubeVideoDataSource.LocalDataSource.OnActionLocalListener() {
+    public void insertVideo(Video video) {
+        mModel.addToFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
-            public void onSuccess() {
-                mView.insertVideoListSuccessfully();
-            }
-
-            @Override
-            public void onSuccess(List<Video> list) {
+            public void onGetDataSuccess(List<Video> data) {
                 //nothing todo
             }
 
             @Override
-            public void onFail() {
+            public void onAddOrRemoveSuccess() {
+                mView.insertVideoListSuccessfully();
+            }
+
+            @Override
+            public void onFail(String message) {
                 mView.insertVideoListUnsuccessfully();
             }
         });
     }
 
     @Override
-    public void removeVideoList(Video video) {
-        mModel.removeFromFavouriteVideoList(video, new YoutubeVideoDataSource.LocalDataSource.OnActionLocalListener() {
+    public void removeVideo(Video video) {
+        mModel.removeFromFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
-            public void onSuccess() {
+            public void onGetDataSuccess(List<Video> data) {
+                //nothing todo
+            }
+
+            @Override
+            public void onAddOrRemoveSuccess() {
                 mView.removeVideoFromFavouriteListSuccessfully();
             }
 
             @Override
-            public void onSuccess(List<Video> list) {
-            }
-
-            @Override
-            public void onFail() {
+            public void onFail(String message) {
+                mView.removeVideoFromFavouriteListUnsuccessfully();
             }
         });
     }

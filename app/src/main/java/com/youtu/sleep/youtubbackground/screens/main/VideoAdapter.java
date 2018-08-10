@@ -45,9 +45,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
         this.sVideos.addAll(videos);
         notifyDataSetChanged();
     }
+
     public List<Video> getVideos() {
         return sVideos;
     }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -64,7 +66,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
         return sVideos == null ? 0 : sVideos.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private boolean isFavourite = false;
 
@@ -122,16 +124,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
                 mImageFavourite.setBackgroundResource(R.drawable.ic_favourite_unable);
             }
             mRelativeVideo.setTag(position);
-            mRelativeVideo.setOnClickListener(on_click);
+            mRelativeVideo.setOnClickListener(this);
         }
 
-        private View.OnClickListener on_click = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = (int) view.getTag();
-                sOnClickVideo.onClickItemVideo(position);
-            }
-        };
+        @Override
+        public void onClick(View view) {
+            int position = (int) view.getTag();
+            sOnClickVideo.onClickItemVideo(position);
+        }
     }
 
     public interface OnItemClick {

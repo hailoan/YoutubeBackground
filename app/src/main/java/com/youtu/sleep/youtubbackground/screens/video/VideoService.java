@@ -192,15 +192,7 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
      * creat a custom notification
      */
     public Notification creatNotification(Video video) {
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_small_layout);
-        remoteViews.setTextViewText(R.id.title_video, video.getTitle());
-        remoteViews.setTextViewText(R.id.chanel_video, video.getChannelTitle());
-        PendingIntent pendingNext = creatPendingIntent(ActionVideo.NEXT);
-        PendingIntent pendingPre = creatPendingIntent(ActionVideo.PRE);
-        PendingIntent pendingPlay = creatPendingIntent(ActionVideo.PLAY);
-        remoteViews.setOnClickPendingIntent(R.id.image_prev, pendingPre);
-        remoteViews.setOnClickPendingIntent(R.id.image_next, pendingNext);
-        remoteViews.setOnClickPendingIntent(R.id.image_play, pendingPlay);
+        RemoteViews remoteViews = creatRemoteViews(video);
         Intent i = new Intent(this, VideoActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.putExtra(Contants.EXTRA_NOTIFICATION, true);
@@ -221,21 +213,13 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
      * update notification
      */
     public void updateNotification(Video video, Bitmap thum) {
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_small_layout);
-        remoteViews.setTextViewText(R.id.title_video, video.getTitle());
-        remoteViews.setTextViewText(R.id.chanel_video, video.getChannelTitle());
+        RemoteViews remoteViews = creatRemoteViews(video);
         if (mMediaPlayer.isPlaying()) {
             remoteViews.setImageViewResource(R.id.image_play, R.drawable.ic_pause);
         } else {
             remoteViews.setImageViewResource(R.id.image_play, R.drawable.ic_play);
         }
         if (thum != null) remoteViews.setImageViewBitmap(R.id.image_thumb, thum);
-        PendingIntent pendingNext = creatPendingIntent(ActionVideo.NEXT);
-        PendingIntent pendingPre = creatPendingIntent(ActionVideo.PRE);
-        PendingIntent pendingPlay = creatPendingIntent(ActionVideo.PLAY);
-        remoteViews.setOnClickPendingIntent(R.id.image_prev, pendingPre);
-        remoteViews.setOnClickPendingIntent(R.id.image_next, pendingNext);
-        remoteViews.setOnClickPendingIntent(R.id.image_play, pendingPlay);
         Intent i = new Intent(this, VideoActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(this, 0, i,
@@ -251,6 +235,23 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
             notification.bigContentView = remoteViews;
         }
         NotificationManagerCompat.from(this).notify(ID, notification);
+    }
+
+
+    /**
+     * creat remoteviews
+     */
+    public RemoteViews creatRemoteViews(Video video) {
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_small_layout);
+        remoteViews.setTextViewText(R.id.title_video, video.getTitle());
+        remoteViews.setTextViewText(R.id.chanel_video, video.getChannelTitle());
+        PendingIntent pendingNext = creatPendingIntent(ActionVideo.NEXT);
+        PendingIntent pendingPre = creatPendingIntent(ActionVideo.PRE);
+        PendingIntent pendingPlay = creatPendingIntent(ActionVideo.PLAY);
+        remoteViews.setOnClickPendingIntent(R.id.image_prev, pendingPre);
+        remoteViews.setOnClickPendingIntent(R.id.image_next, pendingNext);
+        remoteViews.setOnClickPendingIntent(R.id.image_play, pendingPlay);
+        return remoteViews;
     }
 
     private PendingIntent creatPendingIntent(@ActionVideo String action) {

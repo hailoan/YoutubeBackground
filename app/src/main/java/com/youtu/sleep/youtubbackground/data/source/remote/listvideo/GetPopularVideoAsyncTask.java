@@ -37,21 +37,7 @@ public class GetPopularVideoAsyncTask extends AsyncTask<Void, Void, List<Video>>
 
     private Exception mException = null;
 
-<<<<<<< HEAD:app/src/main/java/com/youtu/sleep/youtubbackground/data/source/remote/listvideo/GetPopularVideoAsyncTask.java
     public GetPopularVideoAsyncTask(YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener listener) {
-=======
-    private static YoutubeVideoRemoteDataSource instance;
-
-    public static YoutubeVideoRemoteDataSource getInstance() {
-        if (instance == null) {
-            instance = new YoutubeVideoRemoteDataSource();
-        }
-        return instance;
-    }
-
-    @Override
-    public void getPopularVideos(OnGetPopularVideosListener listener) {
->>>>>>> add notification:app/src/main/java/com/youtu/sleep/youtubbackground/data/source/remote/YoutubeVideoRemoteDataSource.java
         this.mListener = listener;
     }
 

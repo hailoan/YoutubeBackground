@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.youtu.sleep.youtubbackground.BuildConfig.API_KEY;
 import static com.youtu.sleep.youtubbackground.utils.Contants.BASE_URL;
 import static com.youtu.sleep.youtubbackground.utils.Contants.MOST_POPULAR_VIDEO_URL;
 
@@ -33,11 +34,11 @@ import static com.youtu.sleep.youtubbackground.utils.Contants.MOST_POPULAR_VIDEO
 public class GetPopularVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
     private static final String MY_TAG = HomeVideoRemoteDataSource.class.getSimpleName();
-    private YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener mListener;
+    private YoutubeVideoDataSource.CallBack mListener;
 
     private Exception mException = null;
 
-    public GetPopularVideoAsyncTask(YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener listener) {
+    public GetPopularVideoAsyncTask(YoutubeVideoDataSource.CallBack listener) {
         this.mListener = listener;
     }
 
@@ -70,7 +71,7 @@ public class GetPopularVideoAsyncTask extends AsyncTask<Void, Void, List<Video>>
         super.onPostExecute(videos);
         if (mException == null) {
             if (videos != null) {
-                mListener.onSuccess(videos);
+                mListener.onGetDataSuccess(videos);
             } else mListener.onFail(ParameterPopularVideo.NULL_LIST);
         } else mListener.onFail(mException.getMessage());
     }
@@ -108,7 +109,9 @@ public class GetPopularVideoAsyncTask extends AsyncTask<Void, Void, List<Video>>
         params.put(ParameterPopularVideo.PART_KEY, ParameterPopularVideo.PART_VALUE);
         params.put(ParameterPopularVideo.CHART_KEY, ParameterPopularVideo.CHART_VALUE);
         params.put(ParameterPopularVideo.REGION_CODE_KEY, ParameterPopularVideo.REGION_CODE_VALUE);
-        params.put(ParameterPopularVideo.KEY, BuildConfig.API_KEY);
+        params.put(ParameterPopularVideo.MAX_RESULT_KEY, ParameterPopularVideo.MAX_RESULT_VALUE);
+        params.put(ParameterPopularVideo.KEY, API_KEY);
+
         for (String s : params.keySet()) {
             str.append(s).append(params.get(s));
         }
@@ -142,6 +145,8 @@ public class GetPopularVideoAsyncTask extends AsyncTask<Void, Void, List<Video>>
         String CHART_VALUE = "mostPopular";
         String REGION_CODE_KEY = "&regionCode=";
         String REGION_CODE_VALUE = "vn";
+        String MAX_RESULT_KEY = "&maxResults=";
+        String MAX_RESULT_VALUE = "10";
         String KEY = "&key=";
 
         String ITEMS_KEY = "items";

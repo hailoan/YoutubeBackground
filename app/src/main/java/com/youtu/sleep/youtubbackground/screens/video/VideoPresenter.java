@@ -58,7 +58,11 @@ public class VideoPresenter implements VideoContract.Presenter {
         mVideoRepository.addToFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack() {
             @Override
             public void onGetDataSuccess(Object data) {
+<<<<<<< HEAD
                 mView.updateStatusFavouriteVideo(1);
+=======
+
+>>>>>>> ea7ec653a98b6df16bb0b4c8be364a09cb0b27ce
             }
 
             @Override
@@ -68,6 +72,10 @@ public class VideoPresenter implements VideoContract.Presenter {
 
             @Override
             public void onFail(String message) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> ea7ec653a98b6df16bb0b4c8be364a09cb0b27ce
             }
         });
     }

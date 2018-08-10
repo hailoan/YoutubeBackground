@@ -40,7 +40,7 @@ public class PopularVideosPresenter implements PopularVideosContract.Presenter {
     }
 
     @Override
-    public void insertVideoList(Video video) {
+    public void insertVideo(Video video) {
         mModel.addToFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
             public void onGetDataSuccess(List<Video> data) {
@@ -60,7 +60,7 @@ public class PopularVideosPresenter implements PopularVideosContract.Presenter {
     }
 
     @Override
-    public void removeVideoList(Video video) {
+    public void removeVideo(Video video) {
         mModel.removeFromFavouriteVideoList(video, new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
             public void onGetDataSuccess(List<Video> data) {
@@ -74,7 +74,7 @@ public class PopularVideosPresenter implements PopularVideosContract.Presenter {
 
             @Override
             public void onFail(String message) {
-                mView.removeVideoFromFavouriteListSuccessfully();
+                mView.removeVideoFromFavouriteListUnsuccessfully();
             }
         });
     }

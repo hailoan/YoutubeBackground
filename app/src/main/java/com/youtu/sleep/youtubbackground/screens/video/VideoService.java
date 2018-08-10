@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -65,7 +66,11 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
         mCallbackVideo.alreadyPlayVideo();
-        mCallbackVideo.addHolderSurface(mediaPlayer);
+        try {
+            mCallbackVideo.addHolderSurface(mediaPlayer);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         mCallbackVideo.updateStatusVideo(mediaPlayer.isPlaying());
     }
 
@@ -94,10 +99,10 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
     /**
      * receive Intent from notification
      */
-    public void receiveIntent(Intent intent) {
+    public void receiveIntent(@NonNull Intent intent) {
         switch (intent.getAction()) {
             case ActionVideo.CREAT_NOTI:
-                startForeground(ID, creatNotification(mListVideos.get(mPosition)));
+                startForegroundService();
                 break;
             case ActionVideo.PLAY:
                 changeMediaStatus();
@@ -117,6 +122,15 @@ public class VideoService extends Service implements MediaPlayer.OnPreparedListe
                 updateNotification(mListVideos.get(mPosition), null);
                 new DowloadThumbnailVideo(this).execute(mListVideos.get(mPosition).getUrlThumbnail());
                 break;
+        }
+    }
+
+    /**
+     * start foreground service
+     */
+    public void startForegroundService() {
+        if (mListVideos != null) {
+            startForeground(ID, creatNotification(mListVideos.get(mPosition)));
         }
     }
 

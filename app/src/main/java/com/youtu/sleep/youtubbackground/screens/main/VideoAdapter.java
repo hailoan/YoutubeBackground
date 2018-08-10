@@ -26,10 +26,19 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     private static List<Video> mVideos;
     private static OnItemClickListener mListener;
+    private static OnClickItemVideoListener sOnClickVideo;
 
     public VideoAdapter(OnItemClickListener listener) {
         this.mListener = listener;
         this.mVideos = new ArrayList<>();
+    }
+
+    public void setOnClickVideoListener(OnClickItemVideoListener onClickVideo) {
+        this.sOnClickVideo = onClickVideo;
+    }
+
+    public List<Video> getVideos() {
+        return mVideos;
     }
 
     public VideoAdapter() {
@@ -49,8 +58,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        holder.bindData(mVideos.get(position));
+    public void onBindViewHolder(VideoViewHolder holder, int position) {
+        holder.bindData(position);
     }
 
     public void notifyDataChanged() {
@@ -65,7 +74,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         private boolean isFavourite = false;
-
+        private RelativeLayout mRelativeVideo;
         private ImageView mImageVideo, mImageFavourite;
         private TextView mTextDuration, mTextVideoName, mTextChannel, mTextDescription;
 
@@ -78,9 +87,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             mTextVideoName = itemView.findViewById(R.id.text_name);
             mTextChannel = itemView.findViewById(R.id.text_channel);
             mTextDescription = itemView.findViewById(R.id.text_description);
+            mRelativeVideo = itemView.findViewById(R.id.relative_video);
         }
 
-        void bindData(final Video video) {
+        void bindData(int position) {
+            final Video video = mVideos.get(position);
             Glide.with(itemView.getContext()).load(video.getUrlThumbnail()).into(mImageVideo);
             mTextVideoName.setText(video.getTitle());
             mTextChannel.setText(video.getChannelTitle());
@@ -105,7 +116,17 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                     }
                 }
             });
+            mRelativeVideo.setTag(position);
+            mRelativeVideo.setOnClickListener(on_click);
         }
+
+        private View.OnClickListener on_click = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = (int) view.getTag();
+                sOnClickVideo.onClickItemVideo(position);
+            }
+        };
     }
 
     public interface OnItemClickListener {
@@ -113,5 +134,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         void onRemoveFavouriteVideoClick(Video video);
 
+    }
+
+    public interface OnClickItemVideoListener {
+        void onClickItemVideo(int position);
     }
 }

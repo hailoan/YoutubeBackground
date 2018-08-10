@@ -1,9 +1,11 @@
 package com.youtu.sleep.youtubbackground.screens.main.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,13 +21,18 @@ import com.youtu.sleep.youtubbackground.data.model.popularvideo.Video;
 import com.youtu.sleep.youtubbackground.data.repository.YoutubeVideoRepository;
 import com.youtu.sleep.youtubbackground.screens.BaseFragment;
 import com.youtu.sleep.youtubbackground.screens.main.VideoAdapter;
+import com.youtu.sleep.youtubbackground.screens.video.VideoActivity;
+import com.youtu.sleep.youtubbackground.utils.Contants;
+import com.youtu.sleep.youtubbackground.utils.navigator.Navigator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends BaseFragment implements PopularVideosContract.View, VideoAdapter.OnItemClickListener {
+public class HomeFragment extends BaseFragment implements PopularVideosContract.View,
+        VideoAdapter.OnItemClickListener, VideoAdapter.OnClickItemVideoListener {
 
     private VideoAdapter mAdapter;
     private PopularVideosPresenter mPresenter;
@@ -76,6 +83,7 @@ public class HomeFragment extends BaseFragment implements PopularVideosContract.
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         mRecyclerVideos.setLayoutManager(llm);
         mAdapter = new VideoAdapter(this);
+        mAdapter.setOnClickVideoListener(this);
         mRecyclerVideos.setAdapter(mAdapter);
     }
 
@@ -135,5 +143,14 @@ public class HomeFragment extends BaseFragment implements PopularVideosContract.
     @Override
     public void removeVideoFromFavouriteListUnsuccessfully() {
         Toast.makeText(getContext(), R.string.fail_message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClickItemVideo(int position) {
+        Intent intent = new Intent(getActivity(), VideoActivity.class);
+        intent.putParcelableArrayListExtra(Contants.EXTRA_LIST_VIDEO
+                , (ArrayList<? extends Parcelable>) mAdapter.getVideos());
+        intent.putExtra(Contants.EXTRA_POS_VIDEO, position);
+        new Navigator(getActivity()).startActivity(intent);
     }
 }

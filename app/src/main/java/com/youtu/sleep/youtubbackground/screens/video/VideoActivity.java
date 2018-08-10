@@ -46,6 +46,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View,
     private Runnable mRunnableSeekbar;
     private boolean mIsBound = false;
     private int mPositionVideo = -1;
+    private boolean mIsStartByNoti = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,12 @@ public class VideoActivity extends BaseActivity implements VideoContract.View,
     @Override
     protected void onStart() {
         super.onStart();
-        mPresenter.onStart();
+        mIsStartByNoti = getIntent().getBooleanExtra(Contants.EXTRA_NOTIFICATION, false);
+        if (!mIsStartByNoti) {
+            mPresenter.onStart();
+        } else {
+            startBindService();
+        }
     }
 
     @Override
@@ -82,6 +88,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View,
 
     @Override
     public void showListVideo(List<Video> videos) {
+        mTextTitle.setText(videos.get(getCurrentPositionVideo()).getTitle());
         startBindService(videos);
     }
 
@@ -171,7 +178,7 @@ public class VideoActivity extends BaseActivity implements VideoContract.View,
      */
     public void setupToolbar() {
         mImageBack = findViewById(R.id.image_back);
-        mTextTitle = findViewById(R.id.text_title);
+        mTextTitle = findViewById(R.id.text_name_video);
         mImageBack.setOnClickListener(on_click);
     }
 
@@ -313,25 +320,6 @@ public class VideoActivity extends BaseActivity implements VideoContract.View,
         mRunnableSeekbar = null;
     }
 
-    /**
-     * get Video Next
-     */
-    public int getVideoNext() {
-        if (mPositionVideo < (mVideoService.getListVideos().size() - 1)) {
-            return ++mPositionVideo;
-        }
-        return mPositionVideo;
-    }
-
-    /**
-     * get Video Previous
-     */
-    public int getVideoPrevious() {
-        if (mPositionVideo > 1) {
-            return --mPositionVideo;
-        }
-        return mPositionVideo;
-    }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override

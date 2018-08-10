@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by thuy on 01/08/2018.
  */
-public class MainPresenter implements MainContract.Presenter{
+public class MainPresenter implements MainContract.Presenter {
 
     private MainContract.View mView;
     private YoutubeVideoRepository mModel;
@@ -21,10 +21,16 @@ public class MainPresenter implements MainContract.Presenter{
 
     @Override
     public void searchVideo(String query) {
-        mModel.searchVideos(query, new YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener() {
+        mModel.searchVideos(query, new YoutubeVideoDataSource.CallBack<List<Video>>() {
+
             @Override
-            public void onSuccess(List<Video> videos) {
+            public void onGetDataSuccess(List<Video> videos) {
                 mView.showResultSearch(videos);
+            }
+
+            @Override
+            public void onAddOrRemoveSuccess() {
+
             }
 
             @Override

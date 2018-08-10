@@ -21,19 +21,19 @@ public class FavouriteVideosPresenter implements FavouriteVideosContract.Present
 
     @Override
     public void getFavouriteVideos() {
-        mModel.getFavouriteVideos(new YoutubeVideoDataSource.LocalDataSource.OnActionLocalListener() {
+        mModel.getFavouriteVideos(new YoutubeVideoDataSource.CallBack<List<Video>>() {
             @Override
-            public void onSuccess() {
-                //nothing todo
-            }
-
-            @Override
-            public void onSuccess(List<Video> videos) {
+            public void onGetDataSuccess(List<Video> videos) {
                 mView.showFavouriteVideos(videos);
             }
 
             @Override
-            public void onFail() {
+            public void onAddOrRemoveSuccess() {
+
+            }
+
+            @Override
+            public void onFail(String message) {
                 mView.showFavouriteVideosErrorMessage();
             }
         });

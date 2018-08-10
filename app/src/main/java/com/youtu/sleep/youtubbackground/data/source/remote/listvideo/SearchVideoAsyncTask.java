@@ -30,12 +30,12 @@ import static com.youtu.sleep.youtubbackground.utils.Contants.SEARCH_VIDEO_URL;
  * Created by thuy on 10/08/2018.
  */
 public class SearchVideoAsyncTask extends AsyncTask<String, Void, List<Video>> {
-    private YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener mListener;
+    private YoutubeVideoDataSource.CallBack<List<Video>> mCallBack;
 
     private Exception mException = null;
 
-    public SearchVideoAsyncTask(YoutubeVideoDataSource.RemoteDataSource.OnActionRemoteListener listener) {
-        this.mListener = listener;
+    public SearchVideoAsyncTask(YoutubeVideoDataSource.CallBack callBack) {
+        this.mCallBack = callBack;
     }
 
     @Override
@@ -63,9 +63,9 @@ public class SearchVideoAsyncTask extends AsyncTask<String, Void, List<Video>> {
         super.onPostExecute(videos);
         if (mException == null) {
             if (videos != null) {
-                mListener.onSuccess(videos);
-            } else mListener.onFail(ParameterSearchVideo.NULL_LIST);
-        } else mListener.onFail(mException.getMessage());
+                mCallBack.onGetDataSuccess(videos);
+            } else mCallBack.onFail(ParameterSearchVideo.NULL_LIST);
+        } else mCallBack.onFail(mException.getMessage());
     }
 
     private List<Video> parseData(String s) throws ParseJSONException {

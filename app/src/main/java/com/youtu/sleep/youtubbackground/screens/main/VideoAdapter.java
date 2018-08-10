@@ -36,6 +36,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
         this.sVideos = new ArrayList<>();
     }
 
+    public void setListener(OnItemClick listener) {
+        this.mListener = listener;
+    }
+
     public void setOnClickVideoListener(OnClickItemVideoListener onClickVideo) {
         this.sOnClickVideo = onClickVideo;
     }
@@ -84,36 +88,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             mTextChannel = itemView.findViewById(R.id.text_channel);
             mTextDescription = itemView.findViewById(R.id.text_description);
             mRelativeVideo = itemView.findViewById(R.id.relative_video);
-
-            mImageFavourite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!isFavourite) {
-                        checkFavouriteVideo();
-                    } else {
-                        unCheckFavouriteVideo();
-                    }
-                    notifyDataSetChanged();
-                }
-            });
-        }
-
-        void checkFavouriteVideo() {
-            Video v = sVideos.get(getAdapterPosition());
-            v.setIsFavourite(TRUE);
-            mListener.onFavouriteVideoClick(v);
-            isFavourite = true;
-        }
-
-        void unCheckFavouriteVideo() {
-            Video v = sVideos.get(getAdapterPosition());
-            v.setIsFavourite(FALSE);
-            mListener.onRemoveFavouriteVideoClick(v);
-            isFavourite = false;
         }
 
         void bindData(int position) {
-            Video video = sVideos.get(position);
+            final Video video = sVideos.get(position);
             Glide.with(itemView.getContext()).load(video.getUrlThumbnail()).into(mImageVideo);
             mTextVideoName.setText(video.getTitle());
             mTextChannel.setText(video.getChannelTitle());
@@ -123,6 +101,20 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             } else if (video.getIsFavourite() == FALSE) {
                 mImageFavourite.setBackgroundResource(R.drawable.ic_favourite_unable);
             }
+
+            mImageFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (video.getIsFavourite() == FALSE) {
+                        video.setIsFavourite(TRUE);
+                        mListener.onFavouriteVideoClick(video);
+
+                    } else {
+                        video.setIsFavourite(FALSE);
+                        mListener.onRemoveFavouriteVideoClick(video);
+                    }
+                }
+            });
             mRelativeVideo.setTag(position);
             mRelativeVideo.setOnClickListener(this);
         }

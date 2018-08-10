@@ -1,6 +1,7 @@
 package com.youtu.sleep.youtubbackground.screens.main;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener {
+    public static final String SPACE = "";
     private IconTabLayoutCustom mTablayout;
     private ViewPager mViewPager;
     private List<Fragment> mFragments;
-    private ViewPagerTabAdapter mTabAdapter;
 
+    private ViewPagerTabAdapter mTabAdapter;
     private TextView mTextViewTitle;
     private EditText mEditQuery;
-    private ImageView mImageSearch;
+    private ImageView mImageSearch, mImageSearchAction, mImageBack;
+
+    private ConstraintLayout mContrainSearch;
 
     private MainPresenter mPresenter;
 
@@ -63,24 +68,23 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
      */
     public void setupView() {
         mTextViewTitle = findViewById(R.id.text_title);
-        mEditQuery = findViewById(R.id.edit_query_search);
-        mImageSearch = findViewById(R.id.image_search);
-        mImageSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEditQuery.getVisibility() != View.VISIBLE) {
-                    mTextViewTitle.setVisibility(View.GONE);
-                    mEditQuery.setVisibility(View.VISIBLE);
-                    mEditQuery.setFocusable(true);
-                } else if (mEditQuery.getText() != null) {
-                    YoutubeVideoRepository repository = YoutubeVideoRepository.getInstance(getApplicationContext());
-                    mPresenter = new MainPresenter(MainActivity.this, repository);
-                    mPresenter.searchVideo(mEditQuery.getText().toString().trim());
-                }
-            }
-        });
+        setupViewSearch();
         setupViewPager();
         setupTabLayout();
+    }
+
+    /**
+     * setup view search
+     */
+    public void setupViewSearch() {
+        mEditQuery = findViewById(R.id.edit_query_search);
+        mImageBack = findViewById(R.id.image_back);
+        mImageSearch = findViewById(R.id.image_search);
+        mImageSearchAction = findViewById(R.id.image_search_action);
+        mContrainSearch = findViewById(R.id.searh);
+        mImageSearchAction.setOnClickListener(this);
+        mImageSearch.setOnClickListener(this);
+        mImageBack.setOnClickListener(this);
     }
 
     /**
@@ -99,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         mViewPager = findViewById(R.id.viewpager);
         mHomeFragment = new HomeFragment();
         mFragments = new ArrayList<>();
-
         mFragments.add(mHomeFragment);
         mFragments.add(new RecentFragment());
         mFragments.add(new FavouriteFragment());
@@ -116,5 +119,38 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void showFailedSearchMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.image_search:
+                updateToolbar();
+                break;
+            case R.id.image_back:
+                mContrainSearch.setVisibility(View.GONE);
+                mTextViewTitle.setVisibility(View.VISIBLE);
+                mImageSearch.setVisibility(View.VISIBLE);
+                break;
+            case R.id.image_search_action:
+                updateToolbar();
+                break;
+        }
+    }
+
+    /**
+     * update toolbar
+     */
+    public void updateToolbar() {
+        if (mContrainSearch.getVisibility() != View.VISIBLE) {
+            mTextViewTitle.setVisibility(View.GONE);
+            mImageSearch.setVisibility(View.GONE);
+            mContrainSearch.setVisibility(View.VISIBLE);
+            mEditQuery.setFocusable(true);
+        } else if (mEditQuery.getText() != null) {
+            YoutubeVideoRepository repository = YoutubeVideoRepository.getInstance(getApplicationContext());
+            mPresenter = new MainPresenter(MainActivity.this, repository);
+            mPresenter.searchVideo(mEditQuery.getText().toString().trim());
+        }
     }
 }

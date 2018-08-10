@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="Name video"
+        android:text="Video Player"
         android:textColor="@color/color_white"
         android:textSize="@dimen/sp_20" />
 </RelativeLayout>

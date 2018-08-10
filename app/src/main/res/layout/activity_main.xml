@@ -7,10 +7,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_60"
+        android:layout_height="@dimen/dp_65"
         android:background="@color/color_blue"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/dp_16"
         android:paddingRight="@dimen/dp_16">
 
         <com.youtu.sleep.youtubbackground.widget.textviews.TextViewHeaderCustom
@@ -19,18 +18,20 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dp_16"
             android:text="@string/tab_home"
             android:textColor="@color/color_white"
-            android:textSize="@dimen/sp_20"/>
+            android:textSize="@dimen/sp_20"
+            android:visibility="visible" />
 
-        <EditText
-            android:id="@+id/edit_query_search"
-            android:layout_width="0dp"
+        <include
+            android:id="@+id/searh"
+            layout="@layout/search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textColor="@color/color_white"
-            android:background="@android:color/transparent"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/image_search"
@@ -38,7 +39,8 @@
             android:layout_height="@dimen/dp_40"
             android:layout_gravity="center"
             android:padding="@dimen/dp_8"
-            android:src="@drawable/ic_search" />
+            android:src="@drawable/ic_search"
+            android:visibility="visible" />
 
     </LinearLayout>
 
